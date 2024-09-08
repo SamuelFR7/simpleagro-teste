@@ -1,23 +1,36 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { GrupoDeProdutos } from './entities/grupo-de-produtos.entity';
 import { CreateGrupoDeProdutosDto } from './dtos/create-grupo-de-produtos.dto';
 import { UpdateGrupoDeProdutosDto } from './dtos/update-grupo-de-produtos.dto';
+import { PrismaService } from 'src/prisma/prisma.service';
 
 @Injectable()
 export class GrupoDeProdutosService {
-  private readonly grupos: GrupoDeProdutos[] = [];
+  constructor(private prismaService: PrismaService) {}
 
-  create({ nome }: CreateGrupoDeProdutosDto) {
-    const grupo = new GrupoDeProdutos(nome);
-    this.grupos.push(grupo);
+  async create(grupoDeProdutosDto: CreateGrupoDeProdutosDto) {
+    await this.prismaService.gruposDeProdutos.create({
+      data: grupoDeProdutosDto,
+    });
   }
 
-  findAll() {
-    return this.grupos;
+  async findAll() {
+    return await this.prismaService.gruposDeProdutos.findMany({
+      include: {
+        produtos: true,
+      },
+    });
   }
 
-  findOne(id: string) {
-    const grupo = this.grupos.find((grupo) => grupo._id === id);
+  async findOne(id: string, incluirProdutos = false) {
+    const grupo = await this.prismaService.gruposDeProdutos.findUnique({
+      where: {
+        id,
+      },
+      include: {
+        produtos: incluirProdutos,
+      },
+    });
+
     if (!grupo) {
       throw new NotFoundException(`Grupo com o id: ${id} não foi encontrado`);
     }
@@ -25,17 +38,24 @@ export class GrupoDeProdutosService {
     return grupo;
   }
 
-  update(id: string, grupoDeProduto: UpdateGrupoDeProdutosDto) {
-    const grupo = this.findOne(id);
-    Object.assign(grupo, grupoDeProduto);
+  async update(id: string, grupoDeProdutoDto: UpdateGrupoDeProdutosDto) {
+    const grupo = await this.findOne(id);
+
+    await this.prismaService.gruposDeProdutos.update({
+      where: {
+        id: grupo.id,
+      },
+      data: grupoDeProdutoDto,
+    });
   }
 
-  delete(id: string) {
-    const grupoIndex = this.grupos.findIndex((grupo) => grupo._id === id);
-    if (grupoIndex === -1) {
-      throw new NotFoundException(`Grupo com o id: ${id} não foi encontrado`);
-    }
+  async delete(id: string) {
+    const grupo = await this.findOne(id);
 
-    this.grupos.splice(grupoIndex, 1);
+    await this.prismaService.gruposDeProdutos.delete({
+      where: {
+        id: grupo.id,
+      },
+    });
   }
 }

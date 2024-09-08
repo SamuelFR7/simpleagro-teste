@@ -1,42 +1,54 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateProdutoDto } from './dtos/create-produto.dto';
-import { Produto } from './entities/produto.entity';
 import { UpdateProdutoDto } from './dtos/update-produto.dto';
+import { PrismaService } from 'src/prisma/prisma.service';
 
 @Injectable()
 export class ProdutosService {
-  private readonly produtos: Produto[] = [];
+  constructor(private prismaService: PrismaService) {}
 
-  create(produtoDto: CreateProdutoDto) {
-    const produto = new Produto(produtoDto.nome, produtoDto.preco);
-    this.produtos.push(produto);
+  async create(produtoDto: CreateProdutoDto) {
+    await this.prismaService.produtos.create({
+      data: produtoDto,
+    });
   }
 
-  findAll() {
-    return this.produtos;
+  async findAll() {
+    return this.prismaService.produtos.findMany();
   }
 
-  findOne(id: string) {
-    const produto = this.produtos.find((produto) => produto._id === id);
+  async findOne(id: string) {
+    const produto = await this.prismaService.produtos.findUnique({
+      where: {
+        id,
+      },
+    });
+
     if (!produto) {
       throw new NotFoundException(`Produto com o id: ${id} não foi encontrado`);
     }
+
     return produto;
   }
 
-  update(id: string, produtoDto: UpdateProdutoDto) {
-    const produto = this.findOne(id);
-    Object.assign(produto, produtoDto);
+  async update(id: string, produtoDto: UpdateProdutoDto) {
+    const produto = await this.findOne(id);
+
+    await this.prismaService.produtos.update({
+      where: {
+        id: produto.id,
+      },
+      data: produtoDto,
+    });
   }
 
-  delete(id: string) {
-    const produtoIndex = this.produtos.findIndex(
-      (produto) => produto._id === id,
-    );
-    if (produtoIndex === -1) {
-      throw new NotFoundException(`Produto com o id: ${id} não foi encontrado`);
-    }
+  async delete(id: string) {
+    const produto = await this.findOne(id);
 
-    this.produtos.splice(produtoIndex, 1);
+    await this.prismaService.produtos.delete({
+      where: {
+        id: produto.id,
+      },
+    });
   }
 }

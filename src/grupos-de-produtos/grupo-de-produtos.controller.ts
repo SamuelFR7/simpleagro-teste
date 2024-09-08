@@ -7,11 +7,11 @@ import {
   Post,
   Put,
 } from '@nestjs/common';
-import { GrupoDeProdutos } from './entities/grupo-de-produtos.entity';
 import { GrupoDeProdutosService } from './grupo-de-produtos.service';
 import { CreateGrupoDeProdutosDto } from './dtos/create-grupo-de-produtos.dto';
 import { UpdateGrupoDeProdutosDto } from './dtos/update-grupo-de-produtos.dto';
 import { ApiTags } from '@nestjs/swagger';
+import { GruposDeProdutos } from '@prisma/client';
 
 @ApiTags('grupo-de-produtos')
 @Controller('grupo-de-produtos')
@@ -19,30 +19,30 @@ export class GrupoDeProdutosController {
   constructor(private grupoDeProdutosService: GrupoDeProdutosService) {}
 
   @Get()
-  findAll(): GrupoDeProdutos[] {
-    return this.grupoDeProdutosService.findAll();
+  async findAll(): Promise<GruposDeProdutos[]> {
+    return await this.grupoDeProdutosService.findAll();
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string): GrupoDeProdutos {
-    return this.grupoDeProdutosService.findOne(id);
+  async findOne(@Param('id') id: string): Promise<GruposDeProdutos> {
+    return await this.grupoDeProdutosService.findOne(id, true);
   }
 
   @Post()
-  create(@Body() grupoDeProdutos: CreateGrupoDeProdutosDto) {
-    this.grupoDeProdutosService.create(grupoDeProdutos);
+  async create(@Body() grupoDeProdutos: CreateGrupoDeProdutosDto) {
+    await this.grupoDeProdutosService.create(grupoDeProdutos);
   }
 
   @Put(':id')
-  update(
+  async update(
     @Param('id') id: string,
     @Body() grupoDeProdutos: UpdateGrupoDeProdutosDto,
   ) {
-    this.grupoDeProdutosService.update(id, grupoDeProdutos);
+    await this.grupoDeProdutosService.update(id, grupoDeProdutos);
   }
 
   @Delete(':id')
-  delete(@Param('id') id: string) {
-    this.grupoDeProdutosService.delete(id);
+  async delete(@Param('id') id: string) {
+    await this.grupoDeProdutosService.delete(id);
   }
 }

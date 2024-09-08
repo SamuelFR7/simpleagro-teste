@@ -13,8 +13,13 @@ export class CreateProdutoDto {
   @IsNotEmpty()
   @IsNumber()
   @ApiProperty({
-    minimum: 0.01,
+    minimum: 1,
     type: Number,
   })
-  preco: number;
+  precoEmCentavos: number;
+
+  @IsNotEmpty()
+  @IsString()
+  @ApiProperty()
+  grupoDeProdutosId: string;
 }

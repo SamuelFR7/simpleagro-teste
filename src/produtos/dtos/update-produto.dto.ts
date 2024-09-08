@@ -18,4 +18,9 @@ export class UpdateProdutoDto {
     type: Number,
   })
   preco?: number;
+
+  @IsOptional()
+  @IsString()
+  @ApiProperty()
+  grupoDeProdutosId: string;
 }
