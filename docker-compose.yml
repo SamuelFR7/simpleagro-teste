@@ -1,0 +1,32 @@
+version: '3.5'
+
+services:
+  api:
+    build: .
+    ports:
+      - '3000:3000'
+    environment:
+      - DATABASE_URL=postgres://simpleagro:simpleagro@db:5432/simpleagro?schema=public
+    restart: unless-stopped
+    depends_on:
+      - db
+    container_name: api
+
+  db:
+    image: postgres:16.2
+    hostname: db
+    ports:
+      - '5432:5432'
+    volumes:
+      - ./script.sql:/docker-entrypoint-initdb.d/script.sql
+    environment:
+      - POSTGRES_PASSWORD=simpleagro
+      - POSTGRES_USER=simpleagro
+      - POSTGRES_DB=simpleagro
+    container_name: postgres-db
+    restart: unless-stopped
+
+networks:
+  default:
+    driver: bridge
+    name: simpleagro-teste
