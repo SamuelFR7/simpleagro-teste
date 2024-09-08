@@ -8,7 +8,7 @@ export class ProdutosService {
   private readonly produtos: Produto[] = [];
 
   create(produtoDto: CreateProdutoDto) {
-    const produto = new Produto(produtoDto);
+    const produto = new Produto(produtoDto.nome, produtoDto.preco);
     this.produtos.push(produto);
   }
 

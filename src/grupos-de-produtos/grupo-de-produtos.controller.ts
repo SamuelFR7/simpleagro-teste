@@ -11,7 +11,9 @@ import { GrupoDeProdutos } from './entities/grupo-de-produtos.entity';
 import { GrupoDeProdutosService } from './grupo-de-produtos.service';
 import { CreateGrupoDeProdutosDto } from './dtos/create-grupo-de-produtos.dto';
 import { UpdateGrupoDeProdutosDto } from './dtos/update-grupo-de-produtos.dto';
+import { ApiTags } from '@nestjs/swagger';
 
+@ApiTags('grupo-de-produtos')
 @Controller('grupo-de-produtos')
 export class GrupoDeProdutosController {
   constructor(private grupoDeProdutosService: GrupoDeProdutosService) {}
