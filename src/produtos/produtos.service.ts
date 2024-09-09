@@ -8,6 +8,18 @@ export class ProdutosService {
   constructor(private prismaService: PrismaService) {}
 
   async create(produtoDto: CreateProdutoDto) {
+    const grupo = await this.prismaService.gruposDeProdutos.findUnique({
+      where: {
+        id: produtoDto.grupoDeProdutosId,
+      },
+    });
+
+    if (!grupo) {
+      throw new NotFoundException(
+        `Grupo de produtos com o id: ${produtoDto.grupoDeProdutosId} não foi encontrado.`,
+      );
+    }
+
     await this.prismaService.produtos.create({
       data: produtoDto,
     });
