@@ -11,6 +11,11 @@ Teste técnico back-end
 
 ## Rodando localmente
 
+### Pré requisitos
+
+- Docker
+- Portas 3000 e 5432 livres
+
 Clone o projeto
 
 ```bash
