@@ -6,14 +6,14 @@ export class UpdateProdutoDto {
   @IsString()
   @ApiProperty({
     required: false,
-    default: 'Soja',
+    default: 'Milho',
   })
   nome?: string;
 
   @IsOptional()
   @IsNumber()
   @ApiProperty({
-    minimum: 0.01,
+    minimum: 1,
     required: false,
     type: Number,
   })
@@ -21,6 +21,8 @@ export class UpdateProdutoDto {
 
   @IsOptional()
   @IsString()
-  @ApiProperty()
+  @ApiProperty({
+    required: false,
+  })
   grupoDeProdutosId: string;
 }
